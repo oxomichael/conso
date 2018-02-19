@@ -1,0 +1,14 @@
+{% extends '::layout.html.twig' %}
+
+{% block title %}
+    Carburant - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {% include 'header.html.twig' %}
+    <div class="container">
+    {% block carbu_body %}
+    {% endblock %}
+    </div>
+    {% include 'footer.html.twig' %}
+{% endblock %}

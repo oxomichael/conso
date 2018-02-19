@@ -1,0 +1,41 @@
+{% extends 'CarbuBundle::layout.html.twig' %}
+
+{% block carbu_body %}
+
+<h3>Liste de vos véhicules</h3>
+<a class="btn btn-primary" href="{{ path('carbu_vehicle_add') }}">Ajouter un véhicule</a>
+
+{% if vehicles is empty %}
+<p>Aucun véhicules</p>
+{% else %}
+<table class="table table-condensed">
+<thead>
+<tr>
+	<th>Nom</th>
+	<th>#</th>
+</tr>
+</thead>
+<tbody>
+{% for vehicle in vehicles %}
+<tr>
+	<td>{{ vehicle.name }}</td>
+	<td>
+		<div class="btn-group">
+			<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				Action <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li><a href="{{ path('carbu_vehicle_edit', {'id': vehicle.id}) }}">Editer</a></li>
+				<li><a href="{{ path('carbu_full_index', {'vehicleId': vehicle.id}) }}">Pleins</a></li>
+				<li role="separator" class="divider"></li>
+				<li><a href="{{ path('carbu_stat_index', {'vehicleId': vehicle.id}) }}">Statistiques</a></li>
+			</ul>
+		</div>
+	</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+{% endblock %}

@@ -17,3 +17,8 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    site_name: ~
+    optimus_prime: 1
+    optimus_inverse: 2
+    optimus_random: 3

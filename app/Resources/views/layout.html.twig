@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="consommation carburant">
+    <meta name="author" content="">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <title>{% block title %}Carbu{% endblock %}</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/libs/bootstrap/3.3.7/css/bootstrap.min.css') }}">
+    {% block stylesheets %}{% endblock %}   
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="{{ asset('assets/css/ie10-viewport-bug-workaround.css') }}" rel="stylesheet">
+    <!-- Custom styles for this template -->    
+    <link href="{{ asset('assets/css/sticky-footer-navbar.css') }}" rel="stylesheet">   
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="{{ asset('assets/libs/html5shiv/3.7.3/html5shiv.min.js') }}"></script>
+      <script src="{{ asset('assets/libs/respond/1.4.2/respond.min.js') }}"></script>
+    <![endif]-->
+  </head>
+  <body>   
+    {% block body %}{% endblock %}
+    <script src="{{ asset('assets/libs/jquery/jquery-3.3.1.min.js') }}"></script>
+	<script src="{{ asset('assets/libs/bootstrap/3.3.7/js/bootstrap.min.js') }}"></script>
+    {% block javascripts %}{% endblock %}
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{{ asset('assets/js/ie10-viewport-bug-workaround.js') }}"></script>    
+  </body>
+</html>
