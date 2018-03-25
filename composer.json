@@ -6,8 +6,9 @@
     "autoload": {
         "psr-4": {
             "AppBundle\\": "src/AppBundle",
-            "UserBundle\\" : "src/UserBundle",
-            "CarbuBundle\\" : "src/CarbuBundle"
+            "UserBundle\\": "src/UserBundle",
+            "OptimusBundle\\": "src/OptimusBundle",
+            "CarbuBundle\\": "src/CarbuBundle"
         },
         "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
     },
