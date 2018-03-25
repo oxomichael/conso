@@ -15,3 +15,7 @@
 !var/SymfonyRequirements.php
 /vendor/
 /public/bundles/
+/.buildpath
+/.idea/
+/.project
+/.settings/

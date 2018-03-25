@@ -2,15 +2,15 @@
 
 namespace CarbuBundle\Controller;
 
-use CarbuBundle\Entity\Full;
-use CarbuBundle\Form\FullType;
+use CarbuBundle\Entity\Fuel;
+use CarbuBundle\Form\FuelType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class FullController extends Controller
+class FuelController extends Controller
 {
     /**
      * @Route("/full/vehicle/{vehicleId}")
@@ -23,8 +23,8 @@ class FullController extends Controller
         $vehicleM = $this->getDoctrine()->getManager()->getRepository('CarbuBundle:Vehicle');
         $vehicle = $vehicleM->findOneBy(array('user' => $user, 'id' => $vehicleId));
 
-        $fullM = $this->getDoctrine()->getRepository('CarbuBundle:Full');
-        $fulls = $fullM->findBy(array('vehicle' => $vehicle), array('date' => 'desc'));
+        $fullM = $this->getDoctrine()->getRepository('CarbuBundle:Fuel');
+        $fulls = $fullM->findBy(array('vehicle' => $vehicle), array('date_add' => 'desc'));
 
         return $this->render('CarbuBundle:Full:index.html.twig', array(
             'vehicle' => $vehicle,
@@ -47,7 +47,7 @@ class FullController extends Controller
         $vehicle = $vehicleM->findOneBy(array('user' => $user, 'id' => $vehicleId));
 
         // Distance calculation
-        $fullM = $em->getRepository('CarbuBundle:Full');
+        $fullM = $em->getRepository('CarbuBundle:Fuel');
 
         // Previous
         $meterLast = 0;
@@ -58,7 +58,7 @@ class FullController extends Controller
 
         $full->setVehicle($vehicle);
         $full->setMeter($meterLast);
-        $form = $this->get('form.factory')->create(FullType::class, $full);
+        $form = $this->get('form.factory')->create(FuelType::class, $full);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             if ($fullPrevious !== null) {
@@ -109,7 +109,7 @@ class FullController extends Controller
         }
 
         $full->setVehicle($vehicle);
-        $form = $this->get('form.factory')->create(FullType::class, $full);
+        $form = $this->get('form.factory')->create(FuelType::class, $full);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             if ($previousMeter != 0) {
