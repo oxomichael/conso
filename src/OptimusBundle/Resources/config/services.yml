@@ -3,6 +3,6 @@ services:
     class: OptimusBundle\Service\Obfuscator
     autowire: false
     arguments:
-      - prime: '%optimus_prime%'
-      - inverted: '%optimus_inverse%'
-      - random: '%optimus_random%'
+      $prime: '%optimus_prime%'
+      $inverted: '%optimus_inverse%'
+      $random: '%optimus_random%'

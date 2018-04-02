@@ -20,11 +20,23 @@ class Obfuscator
         $this->optimus = new Optimus($this->prime, $this->inverted, $this->random);
     }
 
+    /**
+     * Encode ID
+     *
+     * @param number $id
+     * @return number
+     */
     public function encode($id)
     {
         return $this->optimus->encode($id);
     }
 
+    /**
+     * Decode ID
+     *
+     * @param number $id
+     * @return number
+     */
     public function decode($id)
     {
         return $this->optimus->decode($id);
