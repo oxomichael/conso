@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new UserBundle\UserBundle(),
             new AppBundle\AppBundle(),
             new CarbuBundle\CarbuBundle(),
+            new OptimusBundle\OptimusBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
