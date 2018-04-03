@@ -21,12 +21,20 @@ class VehicleController extends Controller
      */
     public function indexAction()
     {
+        $obfuscator = $this->get('optimus.obfuscator');
+
         $user = $this->getUser();
 
         $vehicleM = $this->getDoctrine()->getManager()->getRepository('CarbuBundle:Vehicle');
         $vehicles = $vehicleM->findBy(array('user' => $user));
 
-        return $this->render('CarbuBundle:Vehicle:index.html.twig', array(
+        if (count($vehicles) > 0) {
+            foreach($vehicles as $vehicle) {
+                $vehicle->oid = $obfuscator->encode($vehicle->getId());
+             }
+        }
+
+        return $this->render('@Carbu/Vehicle/index.html.twig', array(
             'vehicles' => $vehicles,
         ));
     }
@@ -49,21 +57,26 @@ class VehicleController extends Controller
 
             $request->getSession()->getFlashBag()->add('notice', "Véhicule enregistré.");
 
-            return $this->redirectToRoute('carbu_vehicle_view', array('id' => $vehicle->getId()));
+            $obfuscator = $this->get('optimus.obfuscator');
+
+            return $this->redirectToRoute('carbu_vehicle_index', array('oid' => $obfuscator->encode($vehicle->getId())));
         }
 
-        return $this->render('CarbuBundle:Vehicle:add.html.twig', array(
+        return $this->render('@Carbu/Vehicle/add.html.twig', array(
             'form' => $form->createView(),
         ));
     }
 
     /**
-     * @Route("/vehicle/edit/{id}")
+     * @Route("/vehicle/upd/{oid}")
      * @Method({"GET", "POST"})
      * @return Response
      */
-    public function editAction($id, Request $request)
+    public function updAction($oid, Request $request)
     {
+        $obfuscator = $this->get('optimus.obfuscator');
+        $id = $obfuscator->decode($oid);
+
         $vehicleM = $this->getDoctrine()->getManager()->getRepository('CarbuBundle:Vehicle');
         $vehicle = $vehicleM->find($id);
 
@@ -80,10 +93,10 @@ class VehicleController extends Controller
 
             $request->getSession()->getFlashBag()->add('notice', "Véhicule modifié.");
 
-            return $this->redirectToRoute('carbu_vehicle_view', array('id' => $vehicle->getId()));
+            return $this->redirectToRoute('carbu_vehicle_index', array('oid' => $obfuscator->encode($vehicle->getId())));
         }
 
-        return $this->render('CarbuBundle:Vehicle:edit.html.twig', array(
+        return $this->render('@Carbu/Vehicle/upd.html.twig', array(
             'form' => $form->createView(),
         ));
     }
@@ -93,6 +106,6 @@ class VehicleController extends Controller
      */
     public function delAction()
     {
-        return $this->render('CarbuBundle:Vehicle:del.html.twig', array());
+        return $this->render('@Carbu/Vehicle/del.html.twig', array());
     }
 }

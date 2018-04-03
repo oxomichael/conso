@@ -1,4 +1,4 @@
-{% extends 'CarbuBundle::layout.html.twig' %}
+{% extends '@Carbu/layout.html.twig' %}
 
 {% block carbu_body %}
 
@@ -25,10 +25,10 @@
 				Action <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu">
-				<li><a href="{{ path('carbu_vehicle_edit', {'id': vehicle.id}) }}">Editer</a></li>
-				<li><a href="{{ path('carbu_full_index', {'vehicleId': vehicle.id}) }}">Pleins</a></li>
+				<li><a href="{{ path('carbu_vehicle_upd', {'oid': vehicle.oid}) }}">Editer</a></li>
+				<li><a href="{{ path('carbu_fuel_index', {'vehicleId': vehicle.oid}) }}">Pleins</a></li>
 				<li role="separator" class="divider"></li>
-				<li><a href="{{ path('carbu_stat_index', {'vehicleId': vehicle.id}) }}">Statistiques</a></li>
+				<li><a href="{{ path('carbu_stat_index', {'vehicleId': vehicle.oid}) }}">Statistiques</a></li>
 			</ul>
 		</div>
 	</td>
