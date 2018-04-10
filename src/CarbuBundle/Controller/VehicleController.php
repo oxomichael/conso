@@ -93,7 +93,9 @@ class VehicleController extends Controller
 
             $request->getSession()->getFlashBag()->add('notice', "Véhicule modifié.");
 
-            return $this->redirectToRoute('carbu_vehicle_index', array('oid' => $obfuscator->encode($vehicle->getId())));
+            return $this->redirectToRoute('carbu_vehicle_index', array(
+                'oid' => $obfuscator->encode($vehicle->getId()))
+            );
         }
 
         return $this->render('@Carbu/Vehicle/upd.html.twig', array(
