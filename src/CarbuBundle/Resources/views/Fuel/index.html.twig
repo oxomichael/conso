@@ -1,48 +1,48 @@
-{% extends 'CarbuBundle::layout.html.twig' %}
+{% extends '@Carbu/layout.html.twig' %}
 
 {% block carbu_body %}
 
-    <h3>Pleins d'essence : {{ vehicle.name }}</h3>
-    <a class="btn btn-primary" href="{{ path('carbu_full_add', {'vehicleId': vehicle.id}) }}">
-        Ajouter un plein</a>
+<h3>Pleins d'essence : {{ vehicle.name }}</h3>
+<a class="btn btn-primary" href="{{ path('carbu_fuel_add', {'vehicle_oid': vehicle.oid}) }}">
+    Ajouter un plein</a>
 
-    {% if fulls is empty %}
-    <p>Aucun pleins pour ce véhicule</p>
-    {% else %}
-    <table class="table table-condensed">
-    <thead>
-    <tr>
-        <th>Date</th>
-        <th>Litres</th>
-        <th>Prix</th>
-        <th>Distance</th>
-        <th>KM Compteur</th>
-        <th>#</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for full in fulls %}
-    <tr>
-        <td>{{ full.date|date('d/m/Y H:i', timezone="Europe/Paris") }}</td>
-        <td>{{ full.quantity }}</td>
-        <td>{{ full.price }}</td>
-        <td>{{ full.distance }}</td>
-        <td>{{ full.meter }}</td>
-        <td>
-            <div class="btn-group">
-                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    Action <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ path('carbu_full_edit', {'id': full.id, 'vehicleId': vehicle.id}) }}">Editer</a></li>
-                </ul>
-            </div>
-        </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-    </table>
-    {% endif %}
+{% if fuels is empty %}
+<p>Aucun pleins pour ce véhicule</p>
+{% else %}
+<table class="table table-condensed">
+<thead>
+<tr>
+    <th>Date</th>
+    <th>Litres</th>
+    <th>Prix</th>
+    <th>Distance</th>
+    <th>KM Compteur</th>
+    <th>#</th>
+</tr>
+</thead>
+<tbody>
+{% for fuel in fuels %}
+<tr>
+    <td>{{ fuel.date|date('d/m/Y H:i', timezone="Europe/Paris") }}</td>
+    <td>{{ fuel.quantity }}</td>
+    <td>{{ fuel.price }}</td>
+    <td>{{ fuel.distance }}</td>
+    <td>{{ fuel.meter }}</td>
+    <td>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                Action <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="{{ path('carbu_fuel_edit', {'id': fuel.oid, 'vehicle_oid': vehicle.oid}) }}">Editer</a></li>
+            </ul>
+        </div>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
 
 {% endblock %}

@@ -22,6 +22,13 @@ class Fuel
     private $id;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="date")
+     */
+    private $date;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="distance", type="integer")

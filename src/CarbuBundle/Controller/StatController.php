@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class StatController extends Controller
 {
     /**
-     * @Route("/stat/index/vehicle/{vehicleId}")
+     * @Route("/stat/index/vehicle/{vehicle_oid}")
      * @Method({"GET"})
      * @return Response
      */

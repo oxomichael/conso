@@ -5,6 +5,10 @@ namespace CarbuBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FuelType extends AbstractType
 {
@@ -13,8 +17,16 @@ class FuelType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('distance')->add('quantity')->add('price')->add('dateAdd')->add('dateUpd')->add('vehicle');
-    }/**
+        $builder
+            //->add('vehicle', HiddenType::class, array('property_path' => 'vehicle.id'))
+            ->add('date', Date)
+            ->add('distance', IntegerType::class)
+            ->add('quantity', NumberType::class)
+            ->add('price', NumberType::class)
+            ->add('save', SubmitType::class);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)

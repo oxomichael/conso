@@ -2,140 +2,163 @@
 
 namespace CarbuBundle\Controller;
 
-use CarbuBundle\Entity\Fuel;
-use CarbuBundle\Form\FuelType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use CarbuBundle\Entity\Fuel;
+use CarbuBundle\Form\FuelType;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FuelController extends Controller
 {
     /**
-     * @Route("/full/vehicle/{vehicleId}")
+     * @Route("/fuel/vehicle/{vehicle_oid}")
      * @Method({"GET"})
      * @return Response
      */
-    public function indexAction($vehicleId)
+    public function indexAction($vehicle_oid)
     {
+        $obfuscator = $this->get('optimus.obfuscator');
+
         $user = $this->getUser();
+
+        $vehicleId = $obfuscator->decode($vehicle_oid);
         $vehicleM = $this->getDoctrine()->getManager()->getRepository('CarbuBundle:Vehicle');
         $vehicle = $vehicleM->findOneBy(array('user' => $user, 'id' => $vehicleId));
+        $vehicle->oid = $obfuscator->encode($vehicle->getId());
 
-        $fullM = $this->getDoctrine()->getRepository('CarbuBundle:Fuel');
-        $fulls = $fullM->findBy(array('vehicle' => $vehicle), array('date_add' => 'desc'));
+        $fuelM = $this->getDoctrine()->getRepository('CarbuBundle:Fuel');
+        $fuels = $fuelM->findBy(array('vehicle' => $vehicle), array('dateAdd' => 'desc'));
+        if (count($fuels) > 0) {
+            foreach($fuels as $fuel) {
+                $fuel->oid = $obfuscator->encode($fuel->getId());
+            }
+        }
 
-        return $this->render('CarbuBundle:Full:index.html.twig', array(
+        return $this->render('@Carbu/Fuel/index.html.twig', array(
             'vehicle' => $vehicle,
-            'fulls' => $fulls,
+            'fuels' => $fuels,
         ));
     }
 
     /**
-     * @Route("/full/add/vehicle/{vehicleId}")
+     * @Route("/fuel/add/vehicle/{vehicle_oid}")
      * @Method({"GET", "POST"})
      * @return Response
      */
-    public function addAction($vehicleId, Request $request)
+    public function addAction($vehicle_oid, Request $request)
     {
+        $obfuscator = $this->get('optimus.obfuscator');
+
         $user = $this->getUser();
 
-        $full = new Full();
         $em = $this->getDoctrine()->getManager();
+
+        $vehicleId = $obfuscator->decode($vehicle_oid);
         $vehicleM = $em->getRepository('CarbuBundle:Vehicle');
         $vehicle = $vehicleM->findOneBy(array('user' => $user, 'id' => $vehicleId));
 
         // Distance calculation
-        $fullM = $em->getRepository('CarbuBundle:Fuel');
+        $fuelM = $em->getRepository('CarbuBundle:Fuel');
 
         // Previous
-        $meterLast = 0;
-        $fullPrevious = $fullM->findOneBy(array('vehicle' => $vehicle), array('date' => 'desc'));
-        if ($fullPrevious !== null) {
-            $meterLast = $fullPrevious->getMeter();
+        $previousDistance = 0;
+        $fuelPrevious = $fuelM->findOneBy(array('vehicle' => $vehicle), array('dateAdd' => 'desc'));
+        if ($fuelPrevious !== null) {
+            $previousDistance = $fuelPrevious->getDistance();
         }
 
-        $full->setVehicle($vehicle);
-        $full->setMeter($meterLast);
-        $form = $this->get('form.factory')->create(FuelType::class, $full);
+        $fuel = new Fuel();
+        $fuel->setVehicle($vehicle);
+        $fuel->setDistance($previousDistance);
+        $form = $this->get('form.factory')->create(FuelType::class, $fuel);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
-            if ($fullPrevious !== null) {
-                $previousMeter = $fullPrevious->getMeter();
-                $full->setDistance($full->getMeter() - $previousMeter);
+            if ($fuelPrevious !== null) {
+                $previousDistance = $fuelPrevious->getDistance();
+                $fuel->setDistance($fuel->getDistance() - $previousDistance);
             } else {
-                $full->setDistance(0);
+                $fuel->setDistance(0);
             }
 
             // Save data
-            $em->persist($full);
+            $em->persist($fuel);
             $em->flush();
 
             $request->getSession()->getFlashBag()->add('notice', "Plein enregistré.");
 
-            return $this->redirectToRoute('carbu_full_index', array('vehicleId' => $vehicleId));
+            return $this->redirectToRoute('carbu_full_index', array(
+                'vehicle_oid' => $obfuscator->encode($vehicle->getId()))
+            );
         }
 
-        return $this->render('CarbuBundle:Full:add.html.twig', array(
+        return $this->render('@Carbu/Fuel/add.html.twig', array(
             'form' => $form->createView(),
         ));
     }
 
     /**
-     * @Route("/full/edit/vehicle/{vehicleId}/id/{id}")
+     * @Route("/fuel/edit/vehicle/{vehicle_oid}/id/{id}")
      * @Method({"GET", "POST"})
      * @return Response
      */
-    public function editAction($id, $vehicleId, Request $request)
+    public function editAction($id, $vehicle_oid, Request $request)
     {
+        $obfuscator = $this->get('optimus.obfuscator');
+
         $user = $this->getUser();
 
         $em = $this->getDoctrine()->getManager();
+
+        $vehicleId = $obfuscator->decode($vehicle_oid);
         $vehicleM = $em->getRepository('CarbuBundle:Vehicle');
         $vehicle = $vehicleM->findOneBy(array('user' => $user, 'id' => $vehicleId));
 
-        $fullM = $em->getRepository('CarbuBundle:Full');
-        $full = $fullM->find($id);
+        $fuelM = $em->getRepository('CarbuBundle:Fuel');
+        $fuel = $fuelM->find($id);
 
-        if (null === $full) {
+        if (null === $fuel) {
             throw new NotFoundHttpException("Impossible de trouver le plein.");
         }
 
-        $fullPrevious = $fullM->findPrevious($full->getDate(), $vehicle);
-        $previousMeter = 0;
-        if ($fullPrevious !== null) {
-            $previousMeter = $fullPrevious->getMeter();
+        $fuelPrevious = $fuelM->findPrevious($fuel->getDate(), $vehicle);
+        $previousDistance = 0;
+        if ($fuelPrevious !== null) {
+            $previousDistance = $fuelPrevious->getDistance();
         }
 
-        $full->setVehicle($vehicle);
-        $form = $this->get('form.factory')->create(FuelType::class, $full);
+        $fuel->setVehicle($vehicle);
+        $form = $this->get('form.factory')->create(FuelType::class, $fuel);
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             if ($previousMeter != 0) {
-                $full->setDistance($full->getMeter() - $previousMeter);
+                $fuel->setDistance($fuel->getDistance() - $previousDistance);
             } else {
-                $full->setDistance(0);
+                $fuel->setDistance(0);
             }
 
             // Save data
-            $em->persist($full);
+            $em->persist($fuel);
             $em->flush();
 
             $request->getSession()->getFlashBag()->add('notice', "Plein modifié.");
 
-            return $this->redirectToRoute('carbu_full_index', array('vehicleId' => $vehicleId));
+            return $this->redirectToRoute('carbu_fuel_index', array(
+                'vehicle_oid' => $obfuscator->encode($vehicle->getId()))
+            );
         } else {
-            $full->setMeter($previousMeter);
+            $fuel->setMeter($previousDistance);
         }
 
-        return $this->render('CarbuBundle:Full:add.html.twig', array(
+        return $this->render('@Carbu/Fuel/add.html.twig', array(
             'form' => $form->createView(),
         ));
     }
 
     /**
-     * @Route("/full/del/id/{id}")
+     * @Route("/fuel/del/id/{id}")
      * @Method({"GET"})
      */
     public function delAction($id){}
