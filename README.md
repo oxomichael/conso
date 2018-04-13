@@ -5,12 +5,9 @@
 1. git clone
 2. php bin/console doctrine:schema:create
 
-
-
 ## Usage
 
 ### Create user
-
 
 
 ## Todo
@@ -22,13 +19,21 @@
     name  
     tank_quantity 
     
-- Plein
+- fuel
     id  
-    vehicle  
-    quantity  
-    price  
+    vehicle_id  
     distance  
-    date  
+    quantity   
+    price    
+    date_done
+    
+- Mileage  
+    id  
+    fuel_id  
+    start
+    end
+    
+    
 
 - Statistiques
     Moyenne par semaine  
